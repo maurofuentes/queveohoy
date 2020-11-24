@@ -1,14 +1,21 @@
-const peliculasRepo = require('../respositories/peliculasRepo');
+const peliculasRepo = require("../respositories/peliculasRepo");
 
-exports.getPeliculas = async (req, res) => {
- 
+exports.getMovies = async (req, res) => {
+  try {
+    const movies = await peliculasRepo.getAllMovies();
+
+    res.status(200).json(movies);
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
+};
+
+exports.getGenders = async (req, res) => {
     try {
-      const peliculas = await peliculasRepo.getAll();
-      
-      res.status(200).json(peliculas);
+      const genders = await peliculasRepo.getAllGenders();
   
+      res.status(200).json(genders);
     } catch (error) {
-      res.status(500).json({msg: error});
+      res.status(500).json({ msg: error });
     }
-  
   };
