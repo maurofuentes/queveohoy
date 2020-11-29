@@ -11,7 +11,7 @@ exports.getAllMovies = () => {
 
           reject("error al ejecutar la consulta");
         }
-        console.log(results);
+        // console.log(results);
 
         resolve(results);
       }
@@ -30,10 +30,34 @@ exports.getAllGenders = () => {
 
           reject("error al ejecutar la consulta");
         }
-        console.log(results);
+        // console.log(results);
 
         resolve(results);
       }
     );
   });
 };
+
+// filter movies by params
+exports.filterMovies = (anio, titulo, genero) => {
+
+  return new Promise(function ( resolve, reject ) {
+
+    dbconnection.connection.execute("SELECT * FROM pelicula WHERE anio = ? AND titulo = ? AND genero_id = ?",
+    [anio, titulo, genero],
+    function (err, results, fields) {
+      if(err){
+        console.log(err);
+
+        reject("error al ejecutar la consulta");
+
+      }
+      // console.log(results);
+
+      resolve(results);
+
+    });
+
+  });
+
+}

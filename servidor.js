@@ -1,12 +1,12 @@
 //paquetes necesarios para el proyecto
 const express = require("express");
 const bodyParser = require("body-parser");
-// const cors = require('cors');
+const cors = require('cors');
 const peliculasRoute = require("./servidor/routes/peliculasRoute");
 
 const app = express();
 
-// app.use(cors());
+app.use(cors());
 
 app.use(
   bodyParser.urlencoded({
