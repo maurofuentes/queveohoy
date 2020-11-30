@@ -23,8 +23,13 @@ exports.getMovieById = async (req, res) => {
   try {
 
     const peliculas = await peliculasRepo.getById(peliculaId);
+    console.log(peliculas.titulo);
 
-    res.status(200).json({peliculas : peliculas});
+    res.status(200).json(
+      {
+        pelicula : peliculas[0]            
+      }
+    );
 
   } catch (error) {
 
