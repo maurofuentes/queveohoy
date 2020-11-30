@@ -4,9 +4,27 @@ exports.getMovies = async (req, res) => {
 
   try {
 
-    const movies = await peliculasRepo.getAllMovies();
+    const peliculas = await peliculasRepo.getAllMovies();
 
-    res.status(200).json(movies);
+    res.status(200).json({peliculas : peliculas});
+
+  } catch (error) {
+
+    res.status(500).json({ msg: error });
+
+  }
+};
+
+exports.getMovieById = async (req, res) => {
+
+  const peliculaId = req.params.id;
+
+
+  try {
+
+    const peliculas = await peliculasRepo.getById(peliculaId);
+
+    res.status(200).json({peliculas : peliculas});
 
   } catch (error) {
 
@@ -19,9 +37,9 @@ exports.getGenders = async (req, res) => {
 
   try {
     
-    const genders = await peliculasRepo.getAllGenders();
+    const generos = await peliculasRepo.getAllGenders();
 
-    res.status(200).json(genders);
+    res.status(200).json({generos : generos});
 
   } catch (error) {
 
@@ -31,6 +49,7 @@ exports.getGenders = async (req, res) => {
 };
 
 exports.getFilteredMovies = async (req, res) => {
+
   const anio = req.params.anio;
   const titulo = req.params.titulo
   const genero = req.params.genero;

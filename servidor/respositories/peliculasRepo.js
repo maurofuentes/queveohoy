@@ -19,6 +19,26 @@ exports.getAllMovies = () => {
   });
 };
 
+// get movie by ID
+exports.getById = (id) => {
+  return new Promise(function (resolve, reject) {
+    dbconnection.connection.execute(
+      "SELECT * FROM pelicula WHERE id = ?",
+      [id],
+      function (err, results, fields) {
+        if (err) {
+          console.log(err);
+
+          reject("error al ejecutar la consulta");
+        }
+        // console.log(results);
+
+        resolve(results);
+      }
+    );
+  });
+};
+
 // get all gender from DB genero table
 exports.getAllGenders = () => {
   return new Promise(function (resolve, reject) {

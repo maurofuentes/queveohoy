@@ -4,6 +4,8 @@ const peliculasController = require("../controladores/peliculasController");
 
 router.get("/peliculas/", peliculasController.getMovies);
 
+router.get("/peliculas/:id", peliculasController.getMovieById);
+
 router.get("/generos", peliculasController.getGenders);
 
 router.get("/peliculas/:anio/:titulo/:genero", peliculasController.getFilteredMovies);
