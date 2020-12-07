@@ -1,22 +1,195 @@
 const dbconnection = require("../lib/conexionbd");
 
 // get all movies from DB pelicula table
-exports.getAllMovies = () => {
-  return new Promise(function (resolve, reject) {
-    dbconnection.connection.execute(
-      "SELECT * FROM pelicula",
-      function (err, results, fields) {
-        if (err) {
-          console.log(err);
+exports.getAllMovies = (params) => {
 
-          reject("error al ejecutar la consulta");
-        }
-        // console.log(results);
+  const titulo = params.titulo;
+  console.log(titulo);
+  const anio = params.anio;
+  console.log(anio);
+  const genero = params.genero;
+  console.log(genero);
+  const orden = params.columna_orden;
+  console.log(orden);
+  const tipoOrden = params.tipo_orden;
+  console.log(tipoOrden);
 
-        resolve(results);
+  /*
+  * verificamos qué parámetros vienen por URL para filtrar las peliculas de la tabla pelicula
+  */ 
+
+  // sólo titulo
+  if(titulo){
+
+    // titulo + genero
+    if(genero){
+
+      // titulo + genero + anio
+      if (anio){
+
+        return new Promise(function (resolve, reject) {
+          dbconnection.connection.execute(
+            "SELECT * FROM pelicula WHERE titulo = ? AND anio = ? AND genero_id = ? ORDER BY " + orden + " " + tipoOrden,
+            [titulo, anio, genero],
+            function (err, results, fields) {
+              if (err) {
+                console.log(err);
+    
+                reject("error al ejecutar la consulta");
+              }
+              // console.log(results);
+    
+              resolve(results);
+            }
+          );
+        });
+
       }
-    );
-  });
+
+      // si no está anio, busca por titulo y genero_id
+      return new Promise(function (resolve, reject) {
+        dbconnection.connection.execute(
+          "SELECT * FROM pelicula WHERE titulo = ? AND  genero_id = ? ORDER BY " + orden + " " + tipoOrden,
+          [titulo, genero],
+          function (err, results, fields) {
+            if (err) {
+              console.log(err);
+  
+              reject("error al ejecutar la consulta");
+            }
+            // console.log(results);
+  
+            resolve(results);
+          }
+        );
+      });      
+
+    }
+
+    // titulo + anio
+    if (anio){
+
+      return new Promise(function (resolve, reject) {
+        dbconnection.connection.execute(
+          "SELECT * FROM pelicula WHERE titulo = ? AND anio = ? ORDER BY " + orden + " " + tipoOrden,
+          [titulo, anio],
+          function (err, results, fields) {
+            if (err) {
+              console.log(err);
+  
+              reject("error al ejecutar la consulta");
+            }
+            // console.log(results);
+  
+            resolve(results);
+          }
+        );
+      });
+
+    }
+
+    // si no está ni anio ni genero, busca solo por titulo
+    return new Promise(function (resolve, reject) {
+      dbconnection.connection.execute(
+        "SELECT * FROM pelicula WHERE titulo = ? ORDER BY " + orden + " " + tipoOrden,
+        [titulo],
+        function (err, results, fields) {
+          if (err) {
+            console.log(err);
+
+            reject("error al ejecutar la consulta");
+          }
+          // console.log(results);
+
+          resolve(results);
+        }
+      );
+    });
+
+// si no está titulo...
+// solo anio
+  } else if(anio){
+
+    // anio + genero
+    if(genero){
+
+      return new Promise(function (resolve, reject) {
+        dbconnection.connection.execute(
+          "SELECT * FROM pelicula WHERE anio = ? AND genero_id = ? ORDER BY " + orden + " " + tipoOrden,
+          [anio, genero],
+          function (err, results, fields) {
+            if (err) {
+              console.log(err);
+  
+              reject("error al ejecutar la consulta");
+            }
+            // console.log(results);
+  
+            resolve(results);
+          }
+        );
+      });
+
+    }
+
+    // si no esta genero, busca solo por anio
+    return new Promise(function (resolve, reject) {
+      dbconnection.connection.execute(
+        "SELECT * FROM pelicula WHERE anio = ? ORDER BY " + orden + " " + tipoOrden,
+        [anio],
+        function (err, results, fields) {
+          if (err) {
+            console.log(err);
+
+            reject("error al ejecutar la consulta");
+          }
+          // console.log(results);
+
+          resolve(results);
+        }
+      );
+    });
+  
+    // si no esta ni título ni anio...
+    // solo genero
+  } else if(genero){
+
+    return new Promise(function (resolve, reject) {
+      dbconnection.connection.execute(
+        "SELECT * FROM pelicula WHERE genero_id = ? ORDER BY " + orden + " " + tipoOrden,
+        [genero],
+        function (err, results, fields) {
+          if (err) {
+            console.log(err);
+
+            reject("error al ejecutar la consulta");
+          }
+          // console.log(results);
+
+          resolve(results);
+        }
+      );
+    });
+  
+    // si no hay parametros de BiquadFilterNode.apply.apply.
+    // consulta que devuelve todas las peliculas de la tabla pelicula
+  } else {
+    return new Promise(function (resolve, reject) {
+      dbconnection.connection.execute(
+        "SELECT * FROM pelicula ORDER BY " + orden + " " + tipoOrden,
+        function (err, results, fields) {
+          if (err) {
+            console.log(err);
+
+            reject("error al ejecutar la consulta");
+          }
+          // console.log(results);
+
+          resolve(results);
+        }
+      );
+    });
+  }
 };
 
 // get movie by ID
@@ -57,27 +230,3 @@ exports.getAllGenders = () => {
     );
   });
 };
-
-// filter movies by params
-exports.filterMovies = (anio, titulo, genero) => {
-
-  return new Promise(function ( resolve, reject ) {
-
-    dbconnection.connection.execute("SELECT * FROM pelicula WHERE anio = ? AND titulo = ? AND genero_id = ?",
-    [anio, titulo, genero],
-    function (err, results, fields) {
-      if(err){
-        console.log(err);
-
-        reject("error al ejecutar la consulta");
-
-      }
-      // console.log(results);
-
-      resolve(results);
-
-    });
-
-  });
-
-}

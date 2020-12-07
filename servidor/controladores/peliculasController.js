@@ -2,11 +2,16 @@ const peliculasRepo = require("../respositories/peliculasRepo");
 
 exports.getMovies = async (req, res) => {
 
+  const params = req.query;
+
+  console.log(params);
+
   try {
 
-    const peliculas = await peliculasRepo.getAllMovies();
+    const peliculas = await peliculasRepo.getAllMovies(params);
 
-    res.status(200).json({peliculas : peliculas});
+    res.status(200).json({peliculas : peliculas, total : peliculas.length});
+
 
   } catch (error) {
 
@@ -23,11 +28,10 @@ exports.getMovieById = async (req, res) => {
   try {
 
     const peliculas = await peliculasRepo.getById(peliculaId);
-    console.log(peliculas.titulo);
 
     res.status(200).json(
       {
-        pelicula : peliculas[0]            
+        pelicula : peliculas[0]
       }
     );
 
@@ -55,10 +59,23 @@ exports.getGenders = async (req, res) => {
 
 exports.getFilteredMovies = async (req, res) => {
 
-  const anio = req.params.anio;
-  const titulo = req.params.titulo
-  const genero = req.params.genero;
-  
+  if(req.query.anio){
+
+    const anio = req.query.anio;
+
+  }
+
+  if(req.query.titulo){
+
+    const titulo = req.query.titulo;
+
+  }
+
+  if(req.query.genero){
+
+    const genero = req.query.genero;
+
+  }
 
   try {
 
