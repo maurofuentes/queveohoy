@@ -3,6 +3,10 @@ const dbconnection = require("../lib/conexionbd");
 // get all movies from DB pelicula table
 exports.getAllMovies = (params) => {
 
+ console.log(params);
+
+  const currentPage = params.pagina;
+
   const titulo = params.titulo;
   
   const anio = params.anio;
@@ -175,8 +179,19 @@ exports.getAllMovies = (params) => {
     // consulta que devuelve todas las peliculas de la tabla pelicula
   } else {
     return new Promise(function (resolve, reject) {
+      
+      let start = 0;
+
+      if(currentPage > 1){
+        start = (currentPage - 1) * 52;
+      }
+
+      let query = "SELECT * FROM pelicula ORDER BY " + orden + " " + tipoOrden + " LIMIT " + start + ", " + 52;
+
+      console.log(query);
+
       dbconnection.connection.execute(
-        "SELECT * FROM pelicula ORDER BY " + orden + " " + tipoOrden,
+        query,
         function (err, results, fields) {
           if (err) {
             console.log(err);
