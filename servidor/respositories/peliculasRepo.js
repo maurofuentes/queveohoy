@@ -4,15 +4,15 @@ const dbconnection = require("../lib/conexionbd");
 exports.getAllMovies = (params) => {
 
   const titulo = params.titulo;
-  console.log(titulo);
+  
   const anio = params.anio;
-  console.log(anio);
+ 
   const genero = params.genero;
-  console.log(genero);
+  
   const orden = params.columna_orden;
-  console.log(orden);
+  
   const tipoOrden = params.tipo_orden;
-  console.log(tipoOrden);
+
 
   /*
   * verificamos qué parámetros vienen por URL para filtrar las peliculas de la tabla pelicula
@@ -181,9 +181,8 @@ exports.getAllMovies = (params) => {
           if (err) {
             console.log(err);
 
-            reject("error al ejecutar la consulta");
+            reject("error al ejecutar la consulta desde linea 184");
           }
-          // console.log(results);
 
           resolve(results);
         }

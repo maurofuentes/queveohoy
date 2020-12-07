@@ -4,8 +4,6 @@ exports.getMovies = async (req, res) => {
 
   const params = req.query;
 
-  console.log(params);
-
   try {
 
     const peliculas = await peliculasRepo.getAllMovies(params);
