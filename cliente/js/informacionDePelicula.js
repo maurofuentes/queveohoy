@@ -27,7 +27,7 @@
                 $(".rank").html(pelicula.puntuacion + "/10");
                 var actores_string = '';
                 for (i = 0; i < actores.length; i++) {
-                    actores_string += actores[i].nombre + ", "
+                    actores_string += actores[i].actores + ", "
                 }
                 $(".actores").html(actores_string.slice(0, -2));
             },

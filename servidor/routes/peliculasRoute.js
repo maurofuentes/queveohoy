@@ -8,6 +8,4 @@ router.get("/peliculas/:id", peliculasController.getMovieById);
 
 router.get("/generos", peliculasController.getGenders);
 
-// router.get("/peliculas/", peliculasController.getFilteredMovies);
-
 module.exports = router;

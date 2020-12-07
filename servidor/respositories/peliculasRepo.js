@@ -196,7 +196,7 @@ exports.getAllMovies = (params) => {
 exports.getById = (id) => {
   return new Promise(function (resolve, reject) {
     dbconnection.connection.execute(
-      "SELECT * FROM pelicula WHERE id = ?",
+      "SELECT pelicula.id, pelicula.titulo, pelicula.duracion, pelicula.director, pelicula.anio, pelicula.poster, pelicula.trama, pelicula.fecha_lanzamiento, pelicula.puntuacion,pelicula.genero_id, actor.nombre AS actores, genero.nombre FROM pelicula INNER JOIN actor_pelicula ON pelicula.id = actor_pelicula.pelicula_id INNER JOIN actor ON actor_pelicula.actor_id = actor.id INNER JOIN genero ON pelicula.genero_id = genero.id WHERE pelicula.id = ? ",
       [id],
       function (err, results, fields) {
         if (err) {

@@ -29,11 +29,14 @@ exports.getMovieById = async (req, res) => {
 
     const peliculas = await peliculasRepo.getById(peliculaId);
 
+
     res.status(200).json(
       {
-        pelicula : peliculas[0]
+       pelicula : peliculas[0],
+       actores : peliculas
       }
     );
+
 
   } catch (error) {
 
@@ -57,41 +60,3 @@ exports.getGenders = async (req, res) => {
   }
 };
 
-exports.getFilteredMovies = async (req, res) => {
-
-  if(req.query.anio){
-
-    const anio = req.query.anio;
-
-  }
-
-  if(req.query.titulo){
-
-    const titulo = req.query.titulo;
-
-  }
-
-  if(req.query.genero){
-
-    const genero = req.query.genero;
-
-  }
-
-  try {
-
-    const filteredMovies = await peliculasRepo.filterMovies(anio, titulo, genero);
-
-    if (filteredMovies.length === 0) {
-      return res.status(404).json({
-        msg: "no se encontraron peliculas con los datos especificados",
-      });
-    }
-
-    res.status(200).json(filteredMovies);
-
-  } catch (error) {
-
-    return res.status(500).json({ msg: "fallo el controlador" });
-
-  }
-};
