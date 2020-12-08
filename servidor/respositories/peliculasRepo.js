@@ -1,11 +1,13 @@
 const dbconnection = require("../lib/conexionbd");
+const { param } = require("../routes/peliculasRoute");
 
 // get all movies from DB pelicula table
 exports.getAllMovies = (params) => {
 
- console.log(params);
-
+  // extraigo los params en variables
   const currentPage = params.pagina;
+
+  const cantidad = params.cantidad;
 
   const titulo = params.titulo;
   
@@ -17,6 +19,14 @@ exports.getAllMovies = (params) => {
   
   const tipoOrden = params.tipo_orden;
 
+  // determino el LIMIT de la SQL query para el paginador (offset(start), limit)
+  let start = 0;
+  
+  if(currentPage > 1){
+    start = (currentPage - 1) * cantidad;
+  }
+
+  let limit = " LIMIT " + start + ", " + cantidad;
 
   /*
   * verificamos qué parámetros vienen por URL para filtrar las peliculas de la tabla pelicula
@@ -119,7 +129,7 @@ exports.getAllMovies = (params) => {
 
       return new Promise(function (resolve, reject) {
         dbconnection.connection.execute(
-          "SELECT * FROM pelicula WHERE anio = ? AND genero_id = ? ORDER BY " + orden + " " + tipoOrden,
+          "SELECT *, (SELECT COUNT(*) FROM pelicula WHERE anio = "+ anio +" AND genero_id = " + genero +") AS total FROM pelicula WHERE anio = ? AND genero_id = ? ORDER BY " + orden + " " + tipoOrden + limit,
           [anio, genero],
           function (err, results, fields) {
             if (err) {
@@ -139,7 +149,7 @@ exports.getAllMovies = (params) => {
     // si no esta genero, busca solo por anio
     return new Promise(function (resolve, reject) {
       dbconnection.connection.execute(
-        "SELECT * FROM pelicula WHERE anio = ? ORDER BY " + orden + " " + tipoOrden,
+        "SELECT *, (SELECT COUNT(*) FROM pelicula WHERE anio = "+ anio +") AS total FROM pelicula WHERE anio = ? ORDER BY " + orden + " " + tipoOrden + limit,
         [anio],
         function (err, results, fields) {
           if (err) {
@@ -160,7 +170,7 @@ exports.getAllMovies = (params) => {
 
     return new Promise(function (resolve, reject) {
       dbconnection.connection.execute(
-        "SELECT * FROM pelicula WHERE genero_id = ? ORDER BY " + orden + " " + tipoOrden,
+        "SELECT *, (SELECT count(*) FROM pelicula WHERE genero_id = "+ genero + ") AS total FROM pelicula WHERE genero_id = ? ORDER BY " + orden + " " + tipoOrden + limit,
         [genero],
         function (err, results, fields) {
           if (err) {
@@ -179,14 +189,8 @@ exports.getAllMovies = (params) => {
     // consulta que devuelve todas las peliculas de la tabla pelicula
   } else {
     return new Promise(function (resolve, reject) {
-      
-      let start = 0;
-
-      if(currentPage > 1){
-        start = (currentPage - 1) * 52;
-      }
-
-      let query = "SELECT * FROM pelicula ORDER BY " + orden + " " + tipoOrden + " LIMIT " + start + ", " + 52;
+    
+      let query = "SELECT *, (SELECT COUNT(*) FROM pelicula) AS total FROM pelicula ORDER BY " + orden + " " + tipoOrden + limit;
 
       console.log(query);
 
@@ -196,13 +200,14 @@ exports.getAllMovies = (params) => {
           if (err) {
             console.log(err);
 
-            reject("error al ejecutar la consulta desde linea 184");
+            reject("error al ejecutar la consulta");
           }
 
           resolve(results);
         }
       );
     });
+    
   }
 };
 

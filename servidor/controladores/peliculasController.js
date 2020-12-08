@@ -8,8 +8,7 @@ exports.getMovies = async (req, res) => {
 
     const peliculas = await peliculasRepo.getAllMovies(params);
 
-    res.status(200).json({peliculas : peliculas, total : peliculas.length});
-
+    res.status(200).json({peliculas : peliculas, total : peliculas[0].total});
 
   } catch (error) {
 
