@@ -1,5 +1,4 @@
 const dbconnection = require("../lib/conexionbd");
-const { param } = require("../routes/peliculasRoute");
 
 // get all movies from DB pelicula table
 exports.getAllMovies = (params) => {
@@ -192,8 +191,6 @@ exports.getAllMovies = (params) => {
     
       let query = "SELECT *, (SELECT COUNT(*) FROM pelicula) AS total FROM pelicula ORDER BY " + orden + " " + tipoOrden + limit;
 
-      console.log(query);
-
       dbconnection.connection.execute(
         query,
         function (err, results, fields) {
@@ -242,10 +239,97 @@ exports.getAllGenders = () => {
 
           reject("error al ejecutar la consulta");
         }
-        // console.log(results);
-
+        
         resolve(results);
       }
     );
   });
 };
+
+// get recomended movies by genero, anio, puntuacion
+exports.getRecomendedMovies = (params) => {
+
+  
+  console.log(params);
+
+  const genero =  params.genero;
+  const anio_inicio = params.anio_inicio;
+  const anio_fin =  params.anio_fin
+  const puntuacion = params.puntuacion;
+
+
+  if (genero){
+    
+    if(anio_inicio && anio_fin){
+      
+      return new Promise( (resolve, reject) => {
+
+        dbconnection.connection.execute(
+          "SELECT * FROM pelicula INNER JOIN genero ON pelicula.genero_id = genero.id WHERE genero.nombre = ? AND pelicula.anio > " + anio_inicio + " AND pelicula.anio < " + anio_fin,
+          [genero],
+          function (err, results, fields) {
+            if (err) {
+              console.log(err);
+    
+              reject("error al ejecutar la consulta");
+            }
+    
+            resolve(results);
+          }
+        );
+      });      
+    }
+    
+    if (puntuacion){
+      return new Promise( (resolve, reject) => {
+
+        dbconnection.connection.execute(
+          "SELECT * FROM pelicula INNER JOIN genero ON pelicula.genero_id = genero.id WHERE genero.nombre = ? AND pelicula.puntuacion >= ?",
+          [genero, puntuacion],
+          function (err, results, fields) {
+            if (err) {
+              console.log(err);
+    
+              reject("error al ejecutar la consulta");
+            }
+    
+            resolve(results);
+          }
+        );
+      });     
+    }
+      
+    return new Promise( (resolve, reject) => {
+
+      dbconnection.connection.execute(
+        "SELECT * FROM pelicula INNER JOIN genero ON pelicula.genero_id = genero.id WHERE genero.nombre = ? ",
+        [genero],
+        function (err, results, fields) {
+          if (err) {
+            console.log(err);
+  
+            reject("error al ejecutar la consulta");
+          }
+  
+          resolve(results);
+        }
+      );
+    });
+  } else {
+    return new Promise( (resolve, reject) => {
+      dbconnection.connection.execute(
+        "SELECT * FROM pelicula",
+        function (err, results, fields) {
+          if (err) {
+            console.log(err);
+  
+            reject("error al ejecutar la consulta");
+          }
+  
+          resolve(results);
+        }
+      );
+    });
+  }
+
+}

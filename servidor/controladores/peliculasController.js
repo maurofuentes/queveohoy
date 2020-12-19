@@ -57,3 +57,24 @@ exports.getGenders = async (req, res) => {
   }
 };
 
+exports.getRecommended = async (req, res) => {
+
+  const params = req.query;
+
+  console.log(params);
+  
+  try {
+    
+    const recomended = await peliculasRepo.getRecomendedMovies(params);
+
+    res.status(200).json({peliculas : recomended});
+
+    console.log(recomended);
+
+
+  } catch (error) {
+
+    res.status(500).json({ msg: error });
+
+  }
+};
